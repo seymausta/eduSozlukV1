@@ -1,3 +1,4 @@
+from bson import ObjectId
 from flask import Flask, render_template, request, redirect, session
 import pymongo
 app = Flask(__name__)
@@ -16,12 +17,21 @@ def get_current_user():
         return kullanici["adsoyad"] if kullanici else None
     return None
 
+# Yazıları çekmek için fonksiyon
+def get_yazilar(baslik_id):
+    # "yazilar" koleksiyonundan belirli bir başlığa ait yazıları çek
+    yazilar = db["yazilar"].find({"baslik_id": int(baslik_id)})
+    return list(yazilar)
+
 @app.route('/')
 def home_page():
     # Kullanıcı adını al
     current_user = get_current_user()
 
-    return render_template("home.html",current_user=current_user)
+    # Başlıkları al
+    basliklar = get_basliklar()
+
+    return render_template("home.html",current_user=current_user,basliklar=basliklar)
 
 @app.route('/uye-ol', methods=["GET", "POST"])
 def uye_ol():
@@ -66,6 +76,27 @@ def cikis():
     # Oturumu temizle ve ana sayfaya yönlendir
     session.clear()
     return redirect("/", 302)
+
+def get_basliklar():
+    # "basliklar" koleksiyonundaki tüm başlıkları çek
+    basliklar = db["basliklar"].find({}, {"_id": 0, "baslik": 1})
+    return [baslik["baslik"] for baslik in basliklar]
+
+# Yeni eklenen route
+@app.route('/baslik-detay/<baslik_id>')
+def baslik_detay(baslik_id):
+    # Başlıkları al
+    basliklar = get_basliklar()
+    # Başlığı al
+    baslik = db["basliklar"].find_one({"_id": int(baslik_id)})
+    if baslik:
+        # Başlığa ait yazıları al
+        yazilar = get_yazilar(baslik_id)
+        return render_template("baslik-detay.html", baslik=baslik, yazilar=yazilar,basliklar=basliklar)
+    else:
+        return "Başlık bulunamadı"
+
+
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0", port=5000)

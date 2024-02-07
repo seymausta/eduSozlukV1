@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+  <title>EduSozluk - Başlık Detay</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+
+<body>
+
+  <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/">EduSozluk</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/giris">Giriş</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/uye-ol">Üye Ol</a>
+          </li>
+          {% if current_user %}
+          <li class="nav-item">
+            <a class="nav-link" href="/cikis">Çıkış</a>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container mt-5">
+    <div class="row">
+      <div class="col-sm-4">
+        {% if current_user %}
+        <h5>Kullanıcı: {{ current_user }}</h5>
+        {% endif %}
+        <h3 class="mt-4">Gündem</h3>
+        <p>Güncel başlıklar</p>
+        <ul class="nav flex-column">
+          {% for baslik in basliklar %}
+          <li class="nav-item">
+            <a class="nav-link" href="/baslik-detay/{{ baslik_id }}"> {{ baslik }} </a>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+      <div class="col-sm-8">
+        <h2 class="mb-4">{{ baslik.baslik }}</h2>
+        {% for yazi in yazilar %}
+        <div class="mb-4">
+          <h5 class="mb-3">{{ yazi.yazi }}</h5>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-5 p-4 bg-dark text-white text-center">
+    <p>Footer</p>
+  </div>
+
+</body>
+
+</html>
