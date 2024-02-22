@@ -95,6 +95,25 @@ def yazi_sil():
 
         return redirect("/baslik/"+baslik_id, 302)
 
+@app.route('/yazi-guncelle', methods=["POST"])
+def yazi_guncelle():
+    if request.method == 'POST':
+        baslik_id = request.form["baslik_id"]
+        yazi_id = request.form["yazi_id"]
+        yeni_yazi = request.form["yeni_yazi"]
+
+        if not yazi_id:  # Eğer yazi_id değeri boş ise
+            return "Yazı ID boş olamaz!"
+
+        my_query = {"_id": int(yazi_id)}
+
+        yenisi = {"$set": {"yazi": yeni_yazi}}
+        # Belgeyi güncelle
+        db["yazilar"].update_one(my_query, yenisi)
+
+        return redirect("/baslik/"+baslik_id, 302)
+    else:
+        return "Yalnızca POST istekleri kabul edilir."
 
 @app.route('/baslik-ekle', methods=["POST"])
 def baslik_ekle():
