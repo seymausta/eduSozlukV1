@@ -16,7 +16,7 @@ def get_sequence(seq_name):
 def home_page():
     basliklar = list(db["basliklar"].find({}).sort("_id",-1))
     print("ilk başlık:", basliklar[0])
-    yazilar = list(db["yazilar"].find({"baslik_id": basliklar[0]["_id"]}))
+    yazilar = list(db["yazilar"].find({"baslik_id": basliklar[0]["_id"]}).sort("_id",-1).skip(100).limit(20))
     return render_template("baslik-detay.html", aktif_baslik=basliklar[0], basliklar=basliklar, yazilar=yazilar)
 
 
@@ -66,13 +66,15 @@ def cikis():
     return redirect("/", 302)
 
 # Yeni eklenen route
-@app.route('/baslik/<baslik_id>')
-def baslik_detay(baslik_id):
+@app.route('/baslik/<baslik_id>/sayfa/<sayfa_no>')
+def baslik_detay(baslik_id,sayfa_no):
+    sayfalama_adet=5
+    atlanacak_kayit = (int(sayfa_no) - 1) * sayfalama_adet
     if request.method == 'GET':
-        basliklar = list(db["basliklar"].find({}).sort("_id",-1))
+        basliklar = list(db["basliklar"].find({}).sort("_id",-1).limit(20))
         aktif_baslik = db["basliklar"].find_one({"_id": int(baslik_id)})
-        yazilar = list(db["yazilar"].find({"baslik_id": int(baslik_id)}).sort("_id",-1))
-        return render_template("baslik-detay.html", aktif_baslik=aktif_baslik, basliklar=basliklar, yazilar=yazilar)
+        yazilar = list(db["yazilar"].find({"baslik_id": int(baslik_id)}).sort("_id",-1).skip(atlanacak_kayit).limit(sayfalama_adet))
+        return render_template("baslik-detay.html", aktif_baslik=aktif_baslik, basliklar=basliklar, yazilar=yazilar,sayfa_no=int(sayfa_no))
 
 @app.route('/yazi-ekle', methods=["POST"])
 def yazi_ekle():
@@ -84,6 +86,19 @@ def yazi_ekle():
             "yazi": request.form["yeni_yazi"]
         })
         return redirect("/baslik/"+baslik_id, 302)
+
+@app.route('/yazi-olustur', methods=["GET"])
+def yazi_olustur():
+    for i in range(300):
+        if request.method == 'GET':
+            baslik_id = 1
+            db["yazilar"].insert_one({
+                "_id": get_sequence("yazilar"),
+                "baslik_id": baslik_id,
+                "yazi": f"3000 yazı {i}"
+            })
+
+    return "okey"
 
 @app.route('/yazi-sil', methods=["POST"])
 def yazi_sil():
@@ -128,7 +143,6 @@ def baslik_ekle():
             "baslik": baslik
         })
 
-        # Yeni başlık eklendiğinde kullanıcıyı başlık detayına yönlendirin
         return redirect("/baslik/{}".format(yeni_baslik_id), 302)
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0", port=5000)

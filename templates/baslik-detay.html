@@ -62,10 +62,10 @@
                 {% for b in basliklar %}
                 <li class="nav-item">
                     {% if b['_id']==aktif_baslik['_id'] %}
-                    <a class="nav-link active" href="/baslik/{{b['_id']}}">{{ b['baslik'] }}</a>
+                    <a class="nav-link active" href="/baslik/{{b['_id']}}/sayfa/1">{{ b['baslik'] }}</a>
                     <!--i class="fa-solid fa-trash"></i-->
                     {% else %}
-                    <a class="nav-link" href="/baslik/{{b['_id']}}">{{ b['baslik'] }}</a>
+                    <a class="nav-link" href="/baslik/{{b['_id']}}/sayfa/1">{{ b['baslik'] }}</a>
                     {% endif %}
                 </li>
                 {% endfor %}
@@ -94,6 +94,11 @@
 
             </p>
             {% endfor %}
+            <ul class="pagination">
+                <li class="page-item"><a class="page-link" href="/baslik/{{aktif_baslik['_id']}}/sayfa/{{sayfa_no-1}}">Geri</a></li>
+                <li class="page-item"><a class="page-link" href="#">{{sayfa_no}}</a></li>
+                <li class="page-item"><a class="page-link" href="/baslik/{{aktif_baslik['_id']}}/sayfa/{{sayfa_no+1}}">İleri</a></li>
+            </ul>
 
 
         </div>
