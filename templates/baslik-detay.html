@@ -46,7 +46,7 @@
     <div class="row">
         <div class="col-sm-4">
             {% if session['kullanici']%}
-            <h5>Kullanıcı: {{ session['kullanici']['adsoyad'] }}</h5>
+            <h5>Kullanıcı: <img src="data:image/png;base64, {{resim}}" width="25" height="25" class="rounded-circle" alt="Cinque Terre"> {{ session['kullanici']['adsoyad'] }} </h5>
             {% endif %}
             <h3 class="mt-4">Gündem
 
@@ -86,7 +86,8 @@
                 <input type="hidden" name="yazi_id" value="{{y['_id']}}">
                 {{ y['yazi'] }}
                 <button type="submit" class="btn btn-danger">Sil</button>
-                <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#yaziGuncelleModal{{ y['_id'] }}"
+                <button type="button" class="btn btn-warning" data-bs-toggle="modal"
+                        data-bs-target="#yaziGuncelleModal{{ y['_id'] }}"
                         data-baslikid="{{ aktif_baslik['_id'] }}" data-yaziid="{{ y['_id'] }}"
                         data-yazim="{{ y['yazi'] }}">Güncelle
                 </button>
@@ -95,9 +96,13 @@
             </p>
             {% endfor %}
             <ul class="pagination">
-                <li class="page-item"><a class="page-link" href="/baslik/{{aktif_baslik['_id']}}/sayfa/{{sayfa_no-1}}">Geri</a></li>
+                {% if sayfa_no > 1 %}
+                <li class="page-item"><a class="page-link" href="/baslik/{{aktif_baslik['_id']}}/sayfa/{{sayfa_no-1}}">Geri</a>
+                </li>
+                {% endif %}
                 <li class="page-item"><a class="page-link" href="#">{{sayfa_no}}</a></li>
-                <li class="page-item"><a class="page-link" href="/baslik/{{aktif_baslik['_id']}}/sayfa/{{sayfa_no+1}}">İleri</a></li>
+                <li class="page-item"><a class="page-link" href="/baslik/{{aktif_baslik['_id']}}/sayfa/{{sayfa_no+1}}">İleri</a>
+                </li>
             </ul>
 
 
